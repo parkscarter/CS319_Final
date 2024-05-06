@@ -1,19 +1,185 @@
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 function App() {
   const [currentView, setCurrentView] = useState("Home");
+  const [nbaData, setNbaData] = useState(null);
+  const [mmaData, setMmaData] = useState(null);
+  const [mlsData, setMlsData] = useState(null);
+
+  useEffect(() => {
+    const fetchEventData = async () => {
+      try {
+        const [nbaResponse, mmaResponse, mlsResponse] = await Promise.all([
+          fetch("http://localhost:8081/nba"),
+          fetch("http://localhost:8081/mma"),
+          fetch("http://localhost:8081/mls"),
+        ]);
+
+        if (!nbaResponse.ok || !mmaResponse.ok || !mlsResponse.ok) {
+          throw new Error("Failed to fetch data");
+        }
+
+        const nbaData = await nbaResponse.json();
+        const mmaData = await mmaResponse.json();
+        const mlsData = await mlsResponse.json();
+
+        setNbaData(nbaData);
+        setMmaData(mmaData);
+        setMlsData(mlsData);
+        console.log(mlsData);
+      } catch (error) {
+        console.error("Fetch error:", error);
+      }
+    };
+
+    fetchEventData();
+  }, []);
+
   const changeView = (view) => {
     setCurrentView(view);
   };
 
   const renderView = () => {
+    const formatTime = (timestamp) => {
+      const date = new Date(timestamp);
+      return date.toLocaleString("en-US");
+    };
+
     switch (currentView) {
       case "Home":
         return <div>This is the Home view.</div>;
       case "Events":
-        return <div>This is the Events view.</div>;
+        return (
+          <div>
+            <h2>NBA Events</h2>
+            <div className="row">
+              {nbaData &&
+                nbaData.map((event, index) => (
+                  <div key={index} className="col-md-6 mb-4">
+                    <div className="card">
+                      <div className="card-body">
+                        <h5 className="card-title text-center">
+                          {formatTime(event.commence_time)}
+                        </h5>
+                        <div className="row">
+                          <div className="col">
+                            <p className="card-text">
+                              <strong>Teams:</strong>
+                              <br />
+                              {event.away_team}
+                              <br />
+                              {event.home_team}
+                            </p>
+                          </div>
+                          <div className="col">
+                            <p className="card-text">
+                              <strong>Spread Odds:</strong>
+                              <br />
+                              {event.bookmakers[0].markets[1].outcomes[0].point}
+                              <br />
+                              {event.bookmakers[0].markets[1].outcomes[1].point}
+                            </p>
+                          </div>
+                          <div className="col">
+                            <p className="card-text">
+                              <strong>Moneyline:</strong>
+                              <br />
+                              {event.bookmakers[0].markets[0].outcomes[0].price}
+                              <br />
+                              {event.bookmakers[0].markets[0].outcomes[1].price}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+            </div>
+            <h2>MMA Events</h2>
+            <div className="row">
+              {mmaData &&
+                mmaData.map((event, index) => (
+                  <div key={index} className="col-md-6 mb-4">
+                    <div className="card">
+                      <div className="card-body">
+                        <h5 className="card-title text-center">
+                          {formatTime(event.commence_time)}
+                        </h5>
+                        <div className="row">
+                          <div className="col">
+                            <p className="card-text">
+                              <strong>Fighters:</strong>
+                              <br />
+                              {event.away_team}
+                              <br />
+                              {event.home_team}
+                            </p>
+                          </div>
+                          <div className="col">
+                            <p className="card-text">
+                              <strong>Moneyline:</strong>
+                              <br />
+
+                              <br />
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+            </div>
+            <h2>MLS Events</h2>
+            <div className="row">
+              {mlsData &&
+                mlsData.map((event, index) => (
+                  <div key={index} className="col-md-6 mb-4">
+                    <div className="card">
+                      <div className="card-body">
+                        <h5 className="card-title text-center">
+                          {formatTime(event.commence_time)}
+                        </h5>
+                        <div className="row">
+                          <div className="col">
+                            <p className="card-text">
+                              <strong>Teams:</strong>
+                              <br />
+                              {event.away_team}
+                              <br />
+                              {event.home_team}
+                            </p>
+                          </div>
+                          <div className="col">
+                            <p className="card-text">
+                              <strong>Spread Odds:</strong>
+                              <br />
+                              {formatTime(event.commence_time)}
+                              <br />
+                              {JSON.stringify(
+                                event.bookmakers[0].markets[0],
+                                null,
+                                2
+                              )}
+                            </p>
+                          </div>
+                          <div className="col">
+                            <p className="card-text">
+                              <strong>Moneyline:</strong>
+                              <br />
+
+                              <br />
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </div>
+        );
       case "Wagers":
         return <div>This is the Wagers view.</div>;
       case "Profile":
