@@ -75,20 +75,62 @@ function App() {
                           </div>
                           <div className="col">
                             <p className="card-text">
-                              <strong>Spread Odds:</strong>
+                              <strong>Spread:</strong>
                               <br />
-                              {event.bookmakers[0].markets[1].outcomes[0].point}
-                              <br />
-                              {event.bookmakers[0].markets[1].outcomes[1].point}
+                              {event.bookmakers[0] &&
+                              event.bookmakers[0].markets[1] ? (
+                                <div>
+                                  <button>
+                                    {
+                                      event.bookmakers[0].markets[1].outcomes[0]
+                                        .point
+                                    }
+                                  </button>
+                                  <br />
+                                  <button>
+                                    {
+                                      event.bookmakers[0].markets[1].outcomes[1]
+                                        .point
+                                    }
+                                  </button>
+                                </div>
+                              ) : (
+                                <div>
+                                  Missing Data.
+                                  <br />
+                                  Missing Data.
+                                </div>
+                              )}
                             </p>
                           </div>
                           <div className="col">
                             <p className="card-text">
                               <strong>Moneyline:</strong>
                               <br />
-                              {event.bookmakers[0].markets[0].outcomes[0].price}
-                              <br />
-                              {event.bookmakers[0].markets[0].outcomes[1].price}
+                              {event.bookmakers[0] &&
+                              event.bookmakers[0].markets[0] ? (
+                                <div>
+                                  <button>
+                                    {
+                                      event.bookmakers[0].markets[0].outcomes[0]
+                                        .price
+                                    }
+                                  </button>
+                                  <br />
+                                  <button>
+                                    {
+                                      event.bookmakers[0].markets[0].outcomes[1]
+                                        .price
+                                    }
+                                  </button>
+                                </div>
+                              ) : (
+                                <div>
+                                  Missing Data.
+                                  <br />
+                                  Missing Data.
+                                </div>
+                              )}
                             </p>
                           </div>
                         </div>
@@ -124,15 +166,19 @@ function App() {
                               {event.bookmakers[0] &&
                               event.bookmakers[0].markets[0] ? (
                                 <div>
-                                  {
-                                    event.bookmakers[0].markets[0].outcomes[0]
-                                      .price
-                                  }
+                                  <button>
+                                    {
+                                      event.bookmakers[0].markets[0].outcomes[0]
+                                        .price
+                                    }
+                                  </button>
                                   <br />
-                                  {
-                                    event.bookmakers[0].markets[0].outcomes[1]
-                                      .price
-                                  }
+                                  <button>
+                                    {
+                                      event.bookmakers[0].markets[0].outcomes[1]
+                                        .price
+                                    }
+                                  </button>
                                 </div>
                               ) : (
                                 <div>
@@ -176,15 +222,20 @@ function App() {
                               {event.bookmakers[0] &&
                               event.bookmakers[0].markets[0] ? (
                                 <div>
-                                  {
-                                    event.bookmakers[0].markets[0].outcomes[0]
-                                      .price
-                                  }
+                                  <button>
+                                    {
+                                      event.bookmakers[0].markets[0].outcomes[0]
+                                        .price
+                                    }
+                                  </button>
+
                                   <br />
-                                  {
-                                    event.bookmakers[0].markets[0].outcomes[1]
-                                      .price
-                                  }
+                                  <button>
+                                    {
+                                      event.bookmakers[0].markets[0].outcomes[1]
+                                        .price
+                                    }
+                                  </button>
                                 </div>
                               ) : (
                                 <div>
