@@ -121,8 +121,26 @@ function App() {
                             <p className="card-text">
                               <strong>Moneyline:</strong>
                               <br />
-
-                              <br />
+                              {event.bookmakers[0] &&
+                              event.bookmakers[0].markets[0] ? (
+                                <div>
+                                  {
+                                    event.bookmakers[0].markets[0].outcomes[0]
+                                      .price
+                                  }
+                                  <br />
+                                  {
+                                    event.bookmakers[0].markets[0].outcomes[1]
+                                      .price
+                                  }
+                                </div>
+                              ) : (
+                                <div>
+                                  Missing Data.
+                                  <br />
+                                  Missing Data.
+                                </div>
+                              )}
                             </p>
                           </div>
                         </div>
@@ -153,22 +171,28 @@ function App() {
                           </div>
                           <div className="col">
                             <p className="card-text">
-                              <strong>Spread Odds:</strong>
-                              <br />
-                              {formatTime(event.commence_time)}
-                              <br />
-                              {JSON.stringify(
-                                event.bookmakers[0].markets[0],
-                                null,
-                                2
-                              )}
-                            </p>
-                          </div>
-                          <div className="col">
-                            <p className="card-text">
                               <strong>Moneyline:</strong>
                               <br />
-
+                              {event.bookmakers[0] &&
+                              event.bookmakers[0].markets[0] ? (
+                                <div>
+                                  {
+                                    event.bookmakers[0].markets[0].outcomes[0]
+                                      .price
+                                  }
+                                  <br />
+                                  {
+                                    event.bookmakers[0].markets[0].outcomes[1]
+                                      .price
+                                  }
+                                </div>
+                              ) : (
+                                <div>
+                                  Missing Data.
+                                  <br />
+                                  Missing Data.
+                                </div>
+                              )}
                               <br />
                             </p>
                           </div>
