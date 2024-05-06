@@ -53,16 +53,18 @@ function App() {
       case "Events":
         return (
           <div>
-            <h2>NBA Events</h2>
+            <h2 className="text-light">NBA Events</h2>
             <div className="row">
               {nbaData &&
                 nbaData.map((event, index) => (
                   <div key={index} className="col-md-6 mb-4">
                     <div className="card">
-                      <div className="card-body">
+                      <div className="card-header bg-danger">
                         <h5 className="card-title text-center">
                           {formatTime(event.commence_time)}
                         </h5>
+                      </div>
+                      <div className="card-body">
                         <div className="row">
                           <div className="col">
                             <p className="card-text">
@@ -139,16 +141,18 @@ function App() {
                   </div>
                 ))}
             </div>
-            <h2>MMA Events</h2>
+            <h2 className="text-light">MMA Events</h2>
             <div className="row">
               {mmaData &&
                 mmaData.map((event, index) => (
                   <div key={index} className="col-md-6 mb-4">
                     <div className="card">
-                      <div className="card-body">
+                      <div className="card-header bg-danger">
                         <h5 className="card-title text-center">
                           {formatTime(event.commence_time)}
                         </h5>
+                      </div>
+                      <div className="card-body">
                         <div className="row">
                           <div className="col">
                             <p className="card-text">
@@ -195,7 +199,7 @@ function App() {
                   </div>
                 ))}
             </div>
-            <h2>MLS Events</h2>
+            <h2 className="text-danger">MLS Events</h2>
             <div className="row">
               {mlsData &&
                 mlsData.map((event, index) => (
@@ -266,8 +270,8 @@ function App() {
     }
   };
   return (
-    <div className="App">
-      <nav className="navbar navbar-expand-lg navbar-light bg-light">
+    <div className="App bg-dark">
+      <nav className="navbar navbar-expand-lg navbar-light bg-danger">
         <div className="container">
           <a
             className="navbar-brand"
@@ -338,7 +342,7 @@ function App() {
         </div>
       </nav>
       <div className="container mt-4">
-        <h1>{currentView}</h1>
+        <h1 className="text-light">{currentView}</h1>
         {renderView()}
       </div>
     </div>
