@@ -7,6 +7,8 @@ function App() {
   const [nbaData, setNbaData] = useState(null);
   const [mmaData, setMmaData] = useState(null);
   const [mlsData, setMlsData] = useState(null);
+  const [betEvent, setBetEvent] = useState(null);
+  const [betAmount, setBetAmount] = useState("");
 
   useEffect(() => {
     const fetchEventData = async () => {
@@ -39,6 +41,13 @@ function App() {
 
   const changeView = (view) => {
     setCurrentView(view);
+  };
+
+  const handleBetClick = (event, betType, team) => {
+    // Set the selected event for betting
+    setBetEvent({ event, betType, team });
+    // Change view to the betting view
+    setCurrentView("Bet");
   };
 
   const renderView = () => {
@@ -82,14 +91,22 @@ function App() {
                               {event.bookmakers[0] &&
                               event.bookmakers[0].markets[1] ? (
                                 <div>
-                                  <button>
+                                  <button
+                                    onClick={() =>
+                                      handleBetClick(event, "spread", "away")
+                                    }
+                                  >
                                     {
                                       event.bookmakers[0].markets[1].outcomes[0]
                                         .point
                                     }
                                   </button>
                                   <br />
-                                  <button>
+                                  <button
+                                    onClick={() =>
+                                      handleBetClick(event, "spread", "home")
+                                    }
+                                  >
                                     {
                                       event.bookmakers[0].markets[1].outcomes[1]
                                         .point
@@ -112,14 +129,22 @@ function App() {
                               {event.bookmakers[0] &&
                               event.bookmakers[0].markets[0] ? (
                                 <div>
-                                  <button>
+                                  <button
+                                    onClick={() =>
+                                      handleBetClick(event, "moneyline", "away")
+                                    }
+                                  >
                                     {
                                       event.bookmakers[0].markets[0].outcomes[0]
                                         .price
                                     }
                                   </button>
                                   <br />
-                                  <button>
+                                  <button
+                                    onClick={() =>
+                                      handleBetClick(event, "moneyline", "home")
+                                    }
+                                  >
                                     {
                                       event.bookmakers[0].markets[0].outcomes[1]
                                         .price
@@ -170,14 +195,22 @@ function App() {
                               {event.bookmakers[0] &&
                               event.bookmakers[0].markets[0] ? (
                                 <div>
-                                  <button>
+                                  <button
+                                    onClick={() =>
+                                      handleBetClick(event, "moneyline", "away")
+                                    }
+                                  >
                                     {
                                       event.bookmakers[0].markets[0].outcomes[0]
                                         .price
                                     }
                                   </button>
                                   <br />
-                                  <button>
+                                  <button
+                                    onClick={() =>
+                                      handleBetClick(event, "moneyline", "home")
+                                    }
+                                  >
                                     {
                                       event.bookmakers[0].markets[0].outcomes[1]
                                         .price
@@ -226,7 +259,11 @@ function App() {
                               {event.bookmakers[0] &&
                               event.bookmakers[0].markets[0] ? (
                                 <div>
-                                  <button>
+                                  <button
+                                    onClick={() =>
+                                      handleBetClick(event, "moneyline", "away")
+                                    }
+                                  >
                                     {
                                       event.bookmakers[0].markets[0].outcomes[0]
                                         .price
@@ -234,7 +271,11 @@ function App() {
                                   </button>
 
                                   <br />
-                                  <button>
+                                  <button
+                                    onClick={() =>
+                                      handleBetClick(event, "moneyline", "home")
+                                    }
+                                  >
                                     {
                                       event.bookmakers[0].markets[0].outcomes[1]
                                         .price
@@ -257,6 +298,190 @@ function App() {
                   </div>
                 ))}
             </div>
+          </div>
+        );
+      case "Bet":
+        console.log(betEvent);
+
+        const handleAmountChange = (e) => {
+          setBetAmount(e.target.value);
+        };
+
+        const calculateToWin = () => {
+          let odds;
+          // Determine the odds based on the selected bet type and team
+          if (betEvent.betType === "spread") {
+            odds =
+              betEvent.team === "away"
+                ? betEvent.event.bookmakers[0].markets[1].outcomes[0].point
+                : betEvent.event.bookmakers[0].markets[1].outcomes[1].point;
+          } else if (betEvent.betType === "moneyline") {
+            odds =
+              betEvent.team === "away"
+                ? betEvent.event.bookmakers[0].markets[0].outcomes[0].price
+                : betEvent.event.bookmakers[0].markets[0].outcomes[1].price;
+          }
+
+          // Calculate "to win" based on bet type
+          let toWin;
+          if (betEvent.betType === "spread") {
+            toWin = betAmount * odds;
+          } else if (betEvent.betType === "moneyline") {
+            if (odds > 0) {
+              // Positive odds: calculate how much you will win if you bet $100
+              toWin = (betAmount * odds) / 100;
+            } else {
+              // Negative odds: calculate how much you need to bet to win $100
+              toWin = (-100 * betAmount) / odds;
+            }
+          }
+
+          return toWin;
+        };
+        return (
+          <div>
+            <h2>Betting on Event</h2>
+            {/* Display information about the selected event */}
+            {betEvent && (
+              <div className="card">
+                <div className="card-header bg-danger">
+                  <h5 className="card-title text-center">
+                    {formatTime(betEvent.event.commence_time)}
+                  </h5>
+                </div>
+                <div className="card-body">
+                  <div className="row">
+                    <div className="col">
+                      <p className="card-text">
+                        <strong>Teams:</strong>
+                        <br />
+                        {betEvent.event.away_team}
+                        <br />
+                        {betEvent.event.home_team}
+                      </p>
+                    </div>
+                    <div className="col">
+                      <p className="card-text">
+                        <strong>Bet Type:</strong> {betEvent.betType}
+                        <br />
+                        <strong>Team:</strong>{" "}
+                        {betEvent.team === "away"
+                          ? betEvent.event.away_team
+                          : betEvent.event.home_team}
+                      </p>
+                    </div>
+                    <div className="col">
+                      <p className="card-text">
+                        {/* Render the spread bet button based on betType and team */}
+                        {betEvent.betType === "spread" &&
+                          betEvent.team === "away" &&
+                          betEvent.event.bookmakers[0] &&
+                          betEvent.event.bookmakers[0].markets[1] && (
+                            <button
+                              onClick={() =>
+                                handleBetClick(betEvent.event, "spread", "away")
+                              }
+                            >
+                              {
+                                betEvent.event.bookmakers[0].markets[1]
+                                  .outcomes[0].point
+                              }
+                            </button>
+                          )}
+                        {betEvent.betType === "spread" &&
+                          betEvent.team === "home" &&
+                          betEvent.event.bookmakers[0] &&
+                          betEvent.event.bookmakers[0].markets[1] && (
+                            <button
+                              onClick={() =>
+                                handleBetClick(betEvent.event, "spread", "home")
+                              }
+                            >
+                              {
+                                betEvent.event.bookmakers[0].markets[1]
+                                  .outcomes[1].point
+                              }
+                            </button>
+                          )}
+                        {/* If not spread bet, show "Missing Data" */}
+                        {betEvent.betType !== "spread" && <div></div>}
+                      </p>
+                    </div>
+                    <div className="col">
+                      <p className="card-text">
+                        {/* Render the moneyline bet button based on betType and team */}
+                        {betEvent.betType === "moneyline" &&
+                          betEvent.team === "away" &&
+                          betEvent.event.bookmakers[0] &&
+                          betEvent.event.bookmakers[0].markets[0] && (
+                            <button
+                              onClick={() =>
+                                handleBetClick(
+                                  betEvent.event,
+                                  "moneyline",
+                                  "away"
+                                )
+                              }
+                            >
+                              {
+                                betEvent.event.bookmakers[0].markets[0]
+                                  .outcomes[0].price
+                              }
+                            </button>
+                          )}
+                        {betEvent.betType === "moneyline" &&
+                          betEvent.team === "home" &&
+                          betEvent.event.bookmakers[0] &&
+                          betEvent.event.bookmakers[0].markets[0] && (
+                            <button
+                              onClick={() =>
+                                handleBetClick(
+                                  betEvent.event,
+                                  "moneyline",
+                                  "home"
+                                )
+                              }
+                            >
+                              {
+                                betEvent.event.bookmakers[0].markets[0]
+                                  .outcomes[1].price
+                              }
+                            </button>
+                          )}
+                        {/* If not moneyline bet, show "Missing Data" */}
+                        {betEvent.betType !== "moneyline" && <div></div>}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="col">
+                    {/* Bet Amount input */}
+                    <label htmlFor="betAmount" className="form-label">
+                      Bet Amount:
+                    </label>
+                    <input
+                      type="number"
+                      id="betAmount"
+                      className="form-control"
+                      value={betAmount}
+                      onChange={handleAmountChange}
+                    />
+                  </div>
+                  <div className="col">
+                    {/* To Win field */}
+                    <label htmlFor="toWin" className="form-label">
+                      To Win:
+                    </label>
+                    <input
+                      type="number"
+                      id="toWin"
+                      className="form-control"
+                      value={calculateToWin()}
+                      readOnly
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         );
       case "Wagers":
@@ -343,7 +568,15 @@ function App() {
       </nav>
       <div className="container mt-4">
         <h1 className="text-light">{currentView}</h1>
-        {renderView()}
+        {renderView({
+          currentView,
+          nbaData,
+          mmaData,
+          mlsData,
+          betAmount,
+          setBetAmount,
+          handleBetClick,
+        })}
       </div>
     </div>
   );
