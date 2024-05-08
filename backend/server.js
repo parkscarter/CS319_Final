@@ -7,6 +7,7 @@ var bodyParser = require("body-parser");
 app.use(cors());
 app.use(bodyParser.json());
 const port = "8081";
+const dbPort = "3000";
 const host = "localhost";
 const { MongoClient } = require("mongodb");
 const url = "mongodb://127.0.0.1:27017";
@@ -96,8 +97,6 @@ fetch(mmaUrl)
 
 // Endpoint to get NBA odds
 app.get("/nba", (req, res) => {
-  console.log("Hello");
-  console.log(bbObjects);
   res.json(bbObjects);
 });
 
@@ -109,4 +108,25 @@ app.get("/mma", (req, res) => {
 // Endpoint to get MLS odds
 app.get("/mls", (req, res) => {
   res.json(mlsObjects);
+});
+
+app.post("/bet", async (req, res) => {
+  await client.connect();
+  console.log("Request: POST BET");
+
+  const newBet = req.body;
+  const query = {
+    teamBetOn: newBet.teamBetOn,
+    teamBetAgainst: newBet.teamBetAgainst,
+    timeOfGame: newBet.timeOfGame,
+    betAmount: newBet.betAmount,
+    toWin: newBet.toWin,
+  };
+  const result = await db.collection("bets").insertOne(query);
+
+  if (!result) {
+    res.send("Product was not added").status(404);
+  } else {
+    res.status(201).send(result);
+  }
 });
