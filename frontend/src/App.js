@@ -155,6 +155,41 @@ function App() {
     return toWin;
   };
 
+  const cancelBet = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:8081/bet/${id}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        console.log("Bet deleted successfully!");
+      } else {
+        console.error("Failed to delete bet:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error deleting bet:", error);
+    }
+  };
+
+  const doubleBet = async (bet) => {
+    try {
+      const response = await fetch(`http://localhost:8081/bet/${bet._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bet), // Include updated bet data here
+      });
+      if (response.ok) {
+        console.log("Bet doubled successfully!");
+      } else {
+        console.error("Failed to double bet:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error doubling bet:", error);
+    }
+  };
+
   const handleAmountChange = (e) => {
     setBetAmount(e.target.value);
     setToWin(calculateWinnings(e.target.value));
@@ -516,7 +551,8 @@ function App() {
                             {bet.teamBetAgainst}
                           </p>
                           <p className="card-text">
-                            <strong>Time of Game:</strong> {bet.timeOfGame}
+                            <strong>Time of Game:</strong>{" "}
+                            {formatTime(bet.timeOfGame)}
                           </p>
                           <p className="card-text">
                             <strong>Bet Amount:</strong> {bet.betAmount}
@@ -526,11 +562,19 @@ function App() {
                           </p>
                         </div>
                         <div className="col">
-                          <button className="btn btn-primary">Double Up</button>
+                          <button
+                            className="btn btn-primary"
+                            onClick={() => doubleBet(bet)}
+                          >
+                            Double Up
+                          </button>
                           <br />
                           <br />
                           <br />
-                          <button className="btn btn-primary">
+                          <button
+                            className="btn btn-primary"
+                            onClick={() => cancelBet(bet._id)}
+                          >
                             Cancel Bet
                           </button>
                         </div>{" "}

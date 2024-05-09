@@ -2,6 +2,7 @@
 var express = require("express");
 var cors = require("cors");
 var app = express();
+var ObjectId = require("mongodb").ObjectId;
 var fs = require("fs");
 var bodyParser = require("body-parser");
 app.use(cors());
@@ -155,7 +156,9 @@ app.delete("/bet/:id", async (req, res) => {
 
     const { id } = req.params;
 
-    const result = await db.collection("bets").deleteOne({ _id: ObjectId(id) });
+    const result = await db
+      .collection("bets")
+      .deleteOne({ _id: new ObjectId(id) });
 
     if (result.deletedCount === 0) {
       res.send("No bet found with that ID").status(404);
@@ -172,16 +175,20 @@ app.put("/bet/:id", async (req, res) => {
   try {
     await client.connect();
     console.log("Request: PUT BET");
-
     const { id } = req.params;
+    console.log("Received ID:", id); // Log the received ID
     const updatedBet = req.body;
+    console.log(updatedBet);
 
-    updatedBet.betAmount *= 2;
-    updatedBet.toWin *= 2;
+    updatedBet.betAmount = parseInt(updatedBet.betAmount) * 2;
+    updatedBet.toWin = parseInt(updatedBet.toWin.toFixed(2)) * 2;
+
+    // Exclude the _id field from the updated document
+    delete updatedBet._id;
 
     const result = await db
       .collection("bets")
-      .updateOne({ _id: ObjectId(id) }, { $set: updatedBet });
+      .updateOne({ _id: new ObjectId(id) }, { $set: updatedBet });
 
     if (result.matchedCount === 0) {
       res.send("No bet found with that ID").status(404);
