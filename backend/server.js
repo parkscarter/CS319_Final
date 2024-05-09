@@ -7,7 +7,6 @@ var bodyParser = require("body-parser");
 app.use(cors());
 app.use(bodyParser.json());
 const port = "8081";
-const dbPort = "3000";
 const host = "localhost";
 const { MongoClient } = require("mongodb");
 const url = "mongodb://127.0.0.1:27017";
@@ -119,8 +118,8 @@ app.post("/bet", async (req, res) => {
     teamBetOn: newBet.teamBetOn,
     teamBetAgainst: newBet.teamBetAgainst,
     timeOfGame: newBet.timeOfGame,
-    betAmount: newBet.betAmount,
-    toWin: newBet.toWin,
+    betAmount: parseInt(newBet.betAmount),
+    toWin: parseInt(newBet.toWin.toFixed(2)),
   };
   const result = await db.collection("bets").insertOne(query);
 
@@ -128,5 +127,69 @@ app.post("/bet", async (req, res) => {
     res.send("Product was not added").status(404);
   } else {
     res.status(201).send(result);
+  }
+});
+
+app.get("/bets", async (req, res) => {
+  try {
+    await client.connect();
+    console.log("Request: GET BET");
+
+    const bets = await db.collection("bets").find().toArray();
+
+    if (!bets) {
+      res.send("No bets found").status(404);
+    } else {
+      res.status(200).json(bets);
+    }
+  } catch (error) {
+    console.error("Error fetching bets:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+app.delete("/bet/:id", async (req, res) => {
+  try {
+    await client.connect();
+    console.log("Request: DELETE BET");
+
+    const { id } = req.params;
+
+    const result = await db.collection("bets").deleteOne({ _id: ObjectId(id) });
+
+    if (result.deletedCount === 0) {
+      res.send("No bet found with that ID").status(404);
+    } else {
+      res.status(200).send("Bet deleted successfully");
+    }
+  } catch (error) {
+    console.error("Error deleting bet:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+app.put("/bet/:id", async (req, res) => {
+  try {
+    await client.connect();
+    console.log("Request: PUT BET");
+
+    const { id } = req.params;
+    const updatedBet = req.body;
+
+    updatedBet.betAmount *= 2;
+    updatedBet.toWin *= 2;
+
+    const result = await db
+      .collection("bets")
+      .updateOne({ _id: ObjectId(id) }, { $set: updatedBet });
+
+    if (result.matchedCount === 0) {
+      res.send("No bet found with that ID").status(404);
+    } else {
+      res.status(200).send("Bet updated successfully");
+    }
+  } catch (error) {
+    console.error("Error updating bet:", error);
+    res.status(500).send("Internal Server Error");
   }
 });
