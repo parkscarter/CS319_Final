@@ -36,3 +36,35 @@
     transform: rotate(360deg);
   }
 }
+#aboutTitle {
+  font-size: 25px;
+}
+
+#aboutDate {
+  font-size: 20px;
+  font-weight: normal;
+}
+
+#aboutParagraph {
+  text-align: center;
+  line-height: 1.5;
+}
+
+#allPeople {
+  width: 100px;
+  margin: auto;
+}
+
+.aboutInfo {
+  width: 32%;
+  float: left;
+  margin-left: 10px;
+  text-align: center;
+  border-radius: 5px;
+  border: 2px solid #4a5568; /* Grayish-blue border */
+}
+
+.personName {
+  font-weight: bold;
+}
+

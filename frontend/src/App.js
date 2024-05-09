@@ -587,7 +587,57 @@ function App() {
           </div>
         );
       case "About":
-        return <div>This is the About view.</div>;
+        return (
+          <div className="bg-dark">
+            <div className="card">
+              <div className="card-header bg-danger">
+                <h5 className="card-title text-center">
+                  About Rookies Playbook
+                </h5>
+              </div>
+              <div className="card-body">
+                {/*description of website */}
+                <p className="about-text">
+                  This webpage is Carter and Jacob's final project in the SE/Com
+                  S 319 class.<br></br>The objective of this assignment is to
+                  utilize CRUD functionality to engage with a MongoDB database.
+                  <br></br>
+                  Rookies Playbook is a platform designed to help users engage
+                  with sports events and make informed betting decisions. This
+                  project was bootstrapped with Create React App and marks an
+                  exciting venture into the world of sports betting
+                  applications.
+                </p>
+                <p className="about-text">
+                  Utilizing React, Rookies Playbook offers a user-friendly
+                  interface for users to explore upcoming matches in NBA, MMA,
+                  and MLS, and place bets on their favorite teams or fighters.
+                  Whether you're a seasoned bettor or new to the game, Rookies
+                  Playbook provides valuable insights to enhance your betting
+                  experience.
+                </p>
+                <p className="about-text">
+                  Get started with Rookies Playbook today and enjoy the thrill
+                  of sports betting with confidence!
+                </p>
+                <span id="allPeople">
+                  <div class="aboutInfo" id="CarterInfo">
+                    <p class="personName">Carter Parks</p>
+                    <p>Email: parksc29@iastate.edu</p>
+                  </div>
+                  <div class="aboutInfo" id="JacobInfo">
+                    <p class="personName">Jacob Mashol</p>
+                    <p>Email: Jacobmas@iastate.edu</p>
+                  </div>
+                  <div class="aboutInfo" id="AliInfo">
+                    <p class="personName">Ali Jannesari</p>
+                    <p>Email: Jannesar@iastate.edu</p>
+                  </div>
+                </span>
+              </div>
+            </div>
+          </div>
+        );
       default:
         return <div>View not found.</div>;
     }
